@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserLoginRequest;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
@@ -14,7 +13,7 @@ class AuthController extends Controller
 
         if(!auth()->validate($credentials)) {
             return response()->json([
-                'error' => 'unauthorized'
+                'message' => 'Email or password does not match !'
             ], 401);
         }
 
@@ -33,7 +32,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL()
+            'expires_in' => auth()->factory()->getTTL() / 60 / 24
         ], 200);
     }
 }
