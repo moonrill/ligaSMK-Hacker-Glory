@@ -2,27 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserLoginRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    public function login(Request $request) {
-        $data = $request->validate([
-            'credentials' => ['required', 'max:30'],
-            'password' => ['required']
-        ]);
-        
-        // if(filter_var($data['credentials'], FILTER_VALIDATE_EMAIL)) {
-        //     $user = User::query()->where('email', $data['credentials'])->first();
+    public function login(UserLoginRequest $request) : JsonResponse
+    {
+        $credentials = $request->validated();
 
-        //     if(!$user) {
-        //         return response()->json([
-        //             'message' => 'unauthorized'
-        //         ], 401);
-        //     }
-        // }
+        if(!auth()->validate($credentials)) {
+            return response()->json([
+                'error' => 'unauthorized'
+            ], 401);
+        }
 
-        return auth()->user();
+        $token = auth()->attempt($credentials);
+
+        return $this->respondWithToken($token);
+    }
+
+    public function me() : JsonResponse
+    {
+        return response()->json(auth()->user(), 200);
+    }
+
+    protected function respondWithToken($token) : JsonResponse
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL()
+        ], 200);
     }
 }

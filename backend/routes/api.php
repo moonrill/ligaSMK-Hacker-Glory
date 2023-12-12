@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 /* --------------------------- Authenticaiton API --------------------------- */
-Route::prefix('auth')->group(function() {
-    Route::post('/login', [AuthController::class, 'login']);
+Route::prefix('auth')->controller(AuthController::class)->middleware('auth:api')->group(function() {
+    Route::post('/login', 'login')->withoutMiddleware('auth:api');
+    Route::get('/me', 'me');
 });
 /* --------------------------- Authenticaiton API --------------------------- */
