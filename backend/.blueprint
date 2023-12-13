@@ -1,9 +1,0 @@
-created:
-    - database/factories/UserFactory.php
-    - app/Models/User.php
-deleted:
-    - database/migrations\2023_12_11_031514_create_users_table.php
-updated:
-    - database/migrations\2023_12_11_030621_create_users_table.php
-models:
-    User: { id: uuid, username: 'string:20', email: 'string:50', password: string, role: 'enum:admin,guru,pengurus_osis,pengurus_eskul', timestamps: timestamps }

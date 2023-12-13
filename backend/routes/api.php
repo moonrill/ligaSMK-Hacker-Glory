@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,9 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/* --------------------------- Authenticaiton API --------------------------- */
-Route::prefix('auth')->controller(AuthController::class)->middleware('auth:api')->group(function() {
-    Route::post('/login', 'login')->withoutMiddleware('auth:api');
-    Route::get('/me', 'me');
+Route::middleware('auth:api')->group(function() {
+    /* --------------------------- Authenticaiton API --------------------------- */
+    Route::prefix('auth')->controller(AuthController::class)->group(function() {
+        Route::post('/login', 'login')->withoutMiddleware('auth:api');
+        Route::get('/me', 'me');
+    });
+    /* --------------------------- Authenticaiton API --------------------------- */
+
+    /* ------------------------------ CATEGORY API ------------------------------ */
+    Route::prefix('category')->controller(CategoryController::class)->group(function () {
+        Route::get('/', 'index');
+    });
+    /* ------------------------------ CATEGORY API ------------------------------ */
 });
-/* --------------------------- Authenticaiton API --------------------------- */
