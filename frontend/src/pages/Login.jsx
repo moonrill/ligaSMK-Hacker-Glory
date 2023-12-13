@@ -4,6 +4,7 @@ import { useState } from "react";
 import { setEmail, setPassword } from "../reducer/slices/loginSlice";
 import blogLogo from "../assets/images/blog.svg";
 import { setToken } from "../reducer/slices/authSlice";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const dispatch = useDispatch();
@@ -11,6 +12,16 @@ export const Login = () => {
   const [errors, setErrors] = useState({});
   const { email, password } = useSelector((state) => state.login);
   const [login, { isLoading }] = useLoginMutation();
+
+  const { user, token } = useSelector((state) => state.auth);
+  const isAuthenticated = user && token;
+  const isMember = user && user.role === "member";
+  const navigate = useNavigate();
+
+  // Check first if user has logged in and the role is not member
+  if (isAuthenticated) {
+    return <Navigate to={isMember ? "/" : "/dashboard"}/>
+  }
 
   const action = {
     email: setEmail,
@@ -37,7 +48,10 @@ export const Login = () => {
 
     login(data)
       .unwrap()
-      .then((res) => dispatch(setToken(res)))
+      .then((res) => {
+        dispatch(setToken(res));
+        navigate(isMember ? "/" : "/dashboard");
+      })
       .catch(({ data }) => {
         setErrors({ ...errors, login: data?.message });
       });
@@ -51,7 +65,7 @@ export const Login = () => {
             <img src={blogLogo} alt="blog img" className="h-fit" />
           </div>
         </div>
-        <div className="py-7 px-5 w-full h-4/6 bg-slate-50 rounded-t-3xl mt-auto sm:p-6 sm:w-5/6 sm:h-full sm:justify-center sm:rounded-none sm:flex md:w-4/6 md:h-full md:m-0 md:p-6 sm:flex-col md:justify-center">
+        <div className="py-7 px-5 w-full h-4/6 bg-slate-50 rounded-t-3xl mt-auto sm:p-6 sm:w-5/6 sm:h-full sm:justify-center sm:rounded-none sm:flex md:w-4/6 md:h-full md:m-0 md:p-6 sm:flex-col md:justify-center lg:px-8">
           <h1 className="text-4xl font-semibold text-blue-700 lg:text-5xl mb-2">
             Login
           </h1>
@@ -104,7 +118,7 @@ export const Login = () => {
                 spellCheck={false}
                 className={`w-full border ${
                   errors.password && "border-red-600"
-                } rounded p-3 outline-none text-sm block mt-1 focus:ring-1 focus:border-blue-700 focus:ring-1 lg:text-md lg:p-4 lg:shadow-sm lg:text-[1rem]`}
+                } rounded p-3 outline-none text-sm block mt-1 focus:border-blue-700 focus:ring-1 lg:text-md lg:p-4 lg:shadow-sm lg:text-[1rem]`}
                 onChange={handleChange}
               />
               {errors.password && (
