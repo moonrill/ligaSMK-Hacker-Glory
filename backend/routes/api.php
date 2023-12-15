@@ -27,7 +27,11 @@ Route::middleware('auth:api')->group(function() {
 
     /* ------------------------------ CATEGORY API ------------------------------ */
     Route::prefix('category')->controller(CategoryController::class)->group(function () {
-        Route::get('/', 'index');
+        Route::get('/', 'getAll');
+        Route::post('/', 'create');
+        Route::get('/{name}', 'getOne');
+        Route::patch('/{name}', 'update');
+        Route::delete('/{name}', 'delete');
     });
     /* ------------------------------ CATEGORY API ------------------------------ */
 });

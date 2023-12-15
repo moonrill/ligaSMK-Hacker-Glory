@@ -17,6 +17,7 @@ class Category extends Model
      */
     protected $fillable = [
         'name',
+        'icon'
     ];
 
     /**
@@ -32,6 +33,6 @@ class Category extends Model
 
     public function madings(): BelongsToMany
     {
-        return $this->belongsToMany(Mading::class);
+        return $this->belongsToMany(Mading::class, 'mading_categories');
     }
 }

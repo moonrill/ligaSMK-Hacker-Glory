@@ -39,7 +39,7 @@ class Mading extends Model
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'mading_categories');
     }
 
     public function author(): BelongsTo
