@@ -1,15 +1,30 @@
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import searchIcon from "../assets/images/search-icon.svg";
+import { Link, useNavigate } from "react-router-dom";
+import { LuUser2 } from "react-icons/lu";
+import { IoBookmarkOutline } from "react-icons/io5";
+import { HiOutlineLogout } from "react-icons/hi";
+import { useLogoutMutation } from "../services/authApi";
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { user } = useSelector((state) => state.auth);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const { user, token } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const [logout, { isLoading }] = useLogoutMutation();
+  const handleLogout = () => {
+    logout(token)
+      .unwrap()
+      .then(() => navigate("/login"))
+      .catch((err) => console.log(err));
+  };
+
   return (
-    <div className=" shadow-md border border-gray-200 bg-white py-2 sticky top-0 md:py-3 sm:px-0">
+    <div className=" shadow-sm border border-gray-200 bg-white py-2 sticky top-0 md:py-3 sm:px-0 z-50">
       <div className="container px-5 sm:px-10 md:px-16 xl:px-[6rem] mx-auto">
-        <nav className="w-full">
+        <nav className="w-full relative">
           <div className="flex items-center justify-between">
             {/* ------------------------------ NAVBAR BRAND ------------------------------ */}
             <div className="flex items-center gap-2">
@@ -22,10 +37,10 @@ export const Navbar = () => {
             </div>
             {/* ------------------------------ NAVBAR BRAND ------------------------------ */}
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between sm:gap-2 md:gap-3 lg:gap-4">
               {/* -------------------------------- SEARCH IN PHONE ------------------------------- */}
               <div
-                className="w-6 font-semibold sm:hidden group cursor-pointer mr-3"
+                className="w-6 font-semibold md:hidden group cursor-pointer mr-3"
                 onClick={() => setSearchOpen(!searchOpen)}
               >
                 <img
@@ -39,7 +54,7 @@ export const Navbar = () => {
 
               {/* -------------------------------- HAMBURGER ------------------------------- */}
               <div
-                className={`h-full w-10 border border-gray-300 rounded-lg p-2.5 flex flex-col gap-1 shadow=sm sm:hidden cursor-pointer ${
+                className={`h-full w-10 border border-gray-300 rounded-lg p-2.5 flex flex-col gap-1 shadow-sm md:hidden cursor-pointer ${
                   open && "bg-blue-600"
                 }`}
                 onClick={() => setOpen(!open)}
@@ -63,7 +78,7 @@ export const Navbar = () => {
               {/* -------------------------------- HAMBURGER ------------------------------- */}
 
               {/* ------------------------------- NAVBAR LINK ------------------------------ */}
-              <ul className="hidden sm:flex sm:items-center sm:gap-3 md:gap-4">
+              <ul className="hidden md:flex sm:items-center sm:gap-3 md:gap-4">
                 <li>
                   <a href="#" className="text-blue-800 font-semibold text-sm">
                     Home
@@ -93,15 +108,18 @@ export const Navbar = () => {
                     id="search"
                     spellCheck={false}
                     placeholder="Cari"
-                    className="hidden sm:block border py-1.5 px-2 rounded-md focus:outline-none text-sm shadow-sm lg:w-56"
+                    className="hidden md:block border py-1.5 px-2 rounded-md focus:outline-none text-sm shadow-sm lg:w-56"
                   />
                 </label>
               </div>
               {/* ------------------------------- SEARCH BAR ------------------------------- */}
 
-              <div className="relative hidden sm:block">
+              <div className="relative hidden md:block">
                 {user ? (
-                  <div className="rounded-full overflow-hidden border-2 p-0.5 border-blue-700 cursor-pointer group">
+                  <div
+                    className="rounded-full overflow-hidden border-2 p-0.5 border-blue-700 cursor-pointer group"
+                    onClick={() => setProfileOpen(!profileOpen)}
+                  >
                     <img
                       src="https://source.unsplash.com/35x35"
                       alt="profile-picture"
@@ -109,9 +127,12 @@ export const Navbar = () => {
                     />
                   </div>
                 ) : (
-                  <button className="text-sm font-semibold text-blue-600 bg-blue-200 py-1.5 px-2 rounded-md hover:bg-blue-600 hover:text-white">
+                  <Link
+                    to={"/login"}
+                    className="text-sm font-semibold text-blue-600 py-2 px-3 rounded-md hover:underline"
+                  >
                     Login
-                  </button>
+                  </Link>
                 )}
               </div>
             </div>
@@ -119,9 +140,9 @@ export const Navbar = () => {
 
           {/* ------------------------- DROPDOWN ON PHONE SIZE ------------------------- */}
           <div
-            className={`w-3/4 xs:w-3/5 ${
+            className={`w-3/4 sm:w-4/6 ${
               !open && "hidden"
-            } mt-3 sm:hidden absolute border rounded-lg shadow p-2 bg-white right-7`}
+            } mt-3 md:hidden absolute border rounded-lg shadow p-2 bg-white right-0 z-10`}
           >
             <div className="flex flex-col gap-1">
               {user ? (
@@ -137,14 +158,23 @@ export const Navbar = () => {
                     </div>
                     <div className="text-sm">{user.username}</div>
                   </div>
-                  <button className="text-sm text-red-700 border border-red-600 py-1.5 px-2 rounded-md">
-                    Logout
-                  </button>
+                  <div
+                    onClick={() => handleLogout()}
+                    className="text-sm text-red-700 border border-red-600 py-1.5 px-2 rounded-md"
+                  >
+                    {isLoading ? "Logging out..." : "Logout"}
+                  </div>
                 </div>
               ) : (
                 /* --------------------- DROPDOWN IF USER HAS LOGGED IN --------------------- */
                 /* --------------------- DROPDOWN IF USER NOT LOGGED IN --------------------- */
-                <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-lg shadow-sm mb-3">
+                <div className="flex items-center gap-2 bg-gray-100 p-2 justify-between rounded-lg shadow-sm mb-3">
+                  <Link
+                    to={"/login"}
+                    className="text-sm text-blue-600 border border-blue-600 py-1.5 px-2 rounded-md hover:bg-blue-600 hover:text-white"
+                  >
+                    Login
+                  </Link>
                   <div className="flex items-center gap-2">
                     <div className="rounded-full overflow-hidden w-fit">
                       <img
@@ -154,9 +184,6 @@ export const Navbar = () => {
                       />
                     </div>
                   </div>
-                  <button className="text-sm text-blue-600 border border-blue-600 py-1.5 px-2 rounded-md hover:bg-blue-600 hover:text-white">
-                    Login
-                  </button>
                 </div>
                 /* --------------------- DROPDOWN IF USER NOT LOGGED IN --------------------- */
               )}
@@ -180,7 +207,7 @@ export const Navbar = () => {
           <div
             className={`${
               searchOpen ? "block" : "hidden"
-            } sm:hidden absolute mt-4 right-7 bg-white p-3 rounded-md shadow border w-3/4 flex xs:w-3/5`}
+            } md:hidden absolute mt-3 right-0 bg-white p-3 rounded-md shadow border w-3/4 flex sm:w-4/6`}
           >
             <input
               type="text"
@@ -194,6 +221,49 @@ export const Navbar = () => {
             </button>
           </div>
           {/* ------------------------- SEARCH BAR ON PHONE SIZE ------------------------- */}
+
+          {/* ------------------------------ DROPDOWN USER ----------------------------- */}
+          <div
+            className={`absolute hidden w-64 bg-white p-3 mt-3 border rounded-md shadow text-xs right-0 lg:text-sm ${
+              profileOpen && "md:flex"
+            } flex-col gap-1 z-10`}
+          >
+            <Link className="overflow-hidden flex gap-2 rounded-md cursor-pointer">
+              <div>
+                <img
+                  src="https://source.unsplash.com/35x35"
+                  alt="profile-picture"
+                  className="object-cover rounded-full border"
+                />
+              </div>
+              <div>
+                <h1 className="font-semibold">{user?.username}</h1>
+                <h1 className="text-slate-500">{user?.email}</h1>
+              </div>
+            </Link>
+            <Link className="p-2 rounded-md hover:bg-blue-50 cursor-pointer mt-1 border">
+              <div className="flex items-center gap-1.5">
+                <LuUser2 size={"1rem"} />
+                Your profile
+              </div>
+            </Link>
+            <Link className="p-2 rounded-md hover:bg-blue-50 cursor-pointer border">
+              <div className="flex items-center gap-1.5">
+                <IoBookmarkOutline size={"1rem"} />
+                Saved post
+              </div>
+            </Link>
+            <div
+              onClick={() => handleLogout()}
+              className="p-2 rounded-md hover:bg-red-50 cursor-pointer border"
+            >
+              <div className="text-red-600 flex items-center gap-1.5">
+                <HiOutlineLogout size={"1.1rem"} />
+                {isLoading ? "Logging out..." : "Logout"}
+              </div>
+            </div>
+          </div>
+          {/* ------------------------------ DROPDOWN USER ----------------------------- */}
         </nav>
       </div>
     </div>

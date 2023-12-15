@@ -17,12 +17,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:api')->group(function() {
-    /* --------------------------- Authenticaiton API --------------------------- */
+    /* --------------------------- Authentication API --------------------------- */
     Route::prefix('auth')->controller(AuthController::class)->group(function() {
         Route::post('/login', 'login')->withoutMiddleware('auth:api');
         Route::get('/me', 'me');
+        Route::post('/logout', 'logout');
     });
-    /* --------------------------- Authenticaiton API --------------------------- */
+    /* --------------------------- Authentication API --------------------------- */
 
     /* ------------------------------ CATEGORY API ------------------------------ */
     Route::prefix('category')->controller(CategoryController::class)->group(function () {

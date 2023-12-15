@@ -1,5 +1,13 @@
+import { Helmet, HelmetProvider } from "react-helmet-async";
+
 export const Dashboard = () => {
   return (
-    <div>Dashboard</div>
-  )
-}
+    <>
+      <HelmetProvider>
+        <Helmet>
+          <title>Dashboard</title>
+        </Helmet>
+      </HelmetProvider>
+    </>
+  );
+};

@@ -4,6 +4,7 @@ import { Login } from "./pages/Login";
 import { Layout } from "./layout/Layout";
 import { DashboardLayout } from "./layout/DashboardLayout";
 import { Dashboard } from "./pages/Dashboard";
+import { PageNotFound } from "./pages/404";
 
 export const router = createBrowserRouter([
   {
@@ -12,23 +13,26 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Index/>
-      }
-    ]
+        element: <Index />,
+      },
+    ],
   },
   {
     path: "/dashboard",
-    element: <DashboardLayout/>,
+    element: <DashboardLayout />,
     children: [
       {
         index: true,
-        element: <Dashboard/>
-      }
-    ]
+        element: <Dashboard />,
+      },
+    ],
   },
   {
     path: "/login",
     element: <Login />,
   },
-  
+  {
+    path: "/404",
+    element: <PageNotFound />,
+  },
 ]);
