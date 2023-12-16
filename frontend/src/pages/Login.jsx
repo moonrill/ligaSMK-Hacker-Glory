@@ -1,9 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useLoginMutation } from "../services/authApi";
+import { authApi, useLoginMutation } from "../services/authApi";
 import { useState } from "react";
 import { setEmail, setPassword } from "../reducer/slices/loginSlice";
 import blogLogo from "../assets/images/blog.svg";
-import { setToken } from "../reducer/slices/authSlice";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
@@ -18,12 +17,14 @@ export const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
 
   const { user, token } = useSelector((state) => state.auth);
-  const isAuthenticated = user && token;
   const isMember = user && user.role === "member";
   const navigate = useNavigate();
 
-  // Check first if user has logged in and the role is not member
-  if (isAuthenticated) {
+  if (token && !user) {
+    dispatch(authApi.endpoints.getUser.initiate(token, { forceRefetch: true }));
+  }
+
+  if (token && user) {
     return <Navigate to={isMember ? "/" : "/dashboard"} />;
   }
 
@@ -52,17 +53,15 @@ export const Login = () => {
 
     login(data)
       .unwrap()
-      .then((res) => {
-        dispatch(setToken(res));
-        console.log(isMember);
-        navigate("/");
+      .then(() => {
+        navigate(isMember ? '/' : '/dashboard');
       })
       .catch(({ data }) => {
         setErrors({ ...errors, login: data?.message });
       });
   };
 
-  return (
+  return !token && !user ? (
     <>
       <HelmetProvider>
         <Helmet>
@@ -93,27 +92,29 @@ export const Login = () => {
                 >
                   Your email
                 </label>
-                <div className="relative flex items-center">
+                <div className="relative flex flex-col">
                   <HiOutlineMail
-                    className="absolute text-slate-400 left-3 mt-1"
+                    className="absolute text-slate-400 left-3 mt-0.5 top-4 lg:top-5"
                     size={"1.2rem"}
                   />
-                  <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    maxLength={30}
-                    spellCheck={false}
-                    placeholder="example@gmail.com"
-                    className={`ps-9 py-3 outline-none border ${
-                      errors.email && "border-red-600"
-                    } rounded w-full text-sm block mt-1 lg:text-[1rem] lg:py-4 lg:shadow-sm focus:border-blue-700 focus:ring-1 invalid:border-red-600 peer invalid:focus:border-red-600 invalid:focus:ring-0`}
-                    onChange={handleChange}
-                  />
+                  <div>
+                    <input
+                      id="email"
+                      type="email"
+                      name="email"
+                      maxLength={30}
+                      spellCheck={false}
+                      placeholder="example@gmail.com"
+                      className={`ps-9 py-3 outline-none border ${
+                        errors.email && "border-red-600"
+                      } rounded w-full text-sm block mt-1 lg:text-[1rem] lg:py-4 lg:shadow-sm focus:border-blue-700 focus:ring-1 invalid:border-red-600 peer invalid:focus:border-red-600 invalid:focus:ring-0`}
+                      onChange={handleChange}
+                    />
+                    <p className="text-red-600 text-sm mt-0.5 lg:text-md hidden peer-invalid:block">
+                      Email is not valid
+                    </p>
+                  </div>
                 </div>
-                <p className="text-red-600 text-sm mt-0.5 lg:text-md hidden peer-invalid:block">
-                  Email is not valid
-                </p>
                 {errors.email && (
                   <p className="text-red-600 text-sm mt-0.5 lg:text-md">
                     {errors.email}
@@ -197,5 +198,7 @@ export const Login = () => {
         </div>
       </div>
     </>
+  ) : (
+    <h1>Redirecting...</h1>
   );
 };

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { appConfig } from "../config/appConfig";
-import { resetAuth, setUser } from "../reducer/slices/authSlice";
+import { resetAuth, setToken, setUser } from "../reducer/slices/authSlice";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -19,13 +19,8 @@ export const authApi = createApi({
         },
       }),
       onQueryStarted(_queryParam, { dispatch, queryFulfilled }) {
-        queryFulfilled.then(({ data: { access_token } }) => {
-          // Set user in state
-          dispatch(authApi.endpoints.getUser.initiate(access_token))
-            .unwrap()
-            .then((user) => {
-              dispatch(setUser(user));
-            });
+        queryFulfilled.then(({ data }) => {
+          dispatch(setToken(data));
         });
       },
     }),
@@ -36,6 +31,15 @@ export const authApi = createApi({
           Authorization: `Bearer ${token}`,
         },
       }),
+      onQueryStarted: (_queryParam, { dispatch, queryFulfilled }) => {
+        queryFulfilled
+          .then(({ data }) => {
+            dispatch(setUser(data));
+          })
+          .catch(() => {
+            dispatch(resetAuth());
+          });
+      },
     }),
     logout: builder.mutation({
       query: (token) => ({

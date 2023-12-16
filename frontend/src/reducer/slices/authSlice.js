@@ -5,21 +5,23 @@ import token from "../../utils/token";
 export const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: JSON.parse(localStorage.getItem('user')),
+    user: null,
     token: Cookies.get("access_token"),
   },
   reducers: {
     setToken: (state, action) => {
       const { access_token, expires_in } = action.payload;
+      state.token = access_token;
       // set token in cookies
       token.set(access_token, expires_in);
     },
     setUser: (state, action) => {
-      localStorage.setItem('user', JSON.stringify(action.payload))
+      state.user = action.payload;
     },
-    resetAuth: () => {
-      localStorage.removeItem('user');
+    resetAuth: (state) => {
       token.remove();
+      state.token = null;
+      state.user = null;
     }
   },
 });

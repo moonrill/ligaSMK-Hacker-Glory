@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { useState } from "react";
 import searchIcon from "../assets/images/search-icon.svg";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,14 +5,16 @@ import { LuUser2 } from "react-icons/lu";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useLogoutMutation } from "../services/authApi";
+import { useSelector } from "react-redux";
 
-export const Navbar = () => {
+export const Navbar = ({ getUserData }) => {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const { user, token } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
   const [logout, { isLoading }] = useLogoutMutation();
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     logout(token)
       .unwrap()
@@ -28,12 +29,12 @@ export const Navbar = () => {
           <div className="flex items-center justify-between">
             {/* ------------------------------ NAVBAR BRAND ------------------------------ */}
             <div className="flex items-center gap-2">
-              <a
+              <Link
                 className="text-md font-bold tracking-wider text-blue-700"
-                href=""
+                to={"/"}
               >
                 MADISCHOOL
-              </a>
+              </Link>
             </div>
             {/* ------------------------------ NAVBAR BRAND ------------------------------ */}
 
@@ -126,6 +127,8 @@ export const Navbar = () => {
                       className="object-cover rounded-full group-hover:brightness-90 transition-all"
                     />
                   </div>
+                ) : getUserData ? (
+                  <p className="text-sm text-blue-700">Loading...</p>
                 ) : (
                   <Link
                     to={"/login"}
@@ -165,6 +168,8 @@ export const Navbar = () => {
                     {isLoading ? "Logging out..." : "Logout"}
                   </div>
                 </div>
+              ) : getUserData ? (
+                <p className="text-sm text-blue-700">Loading...</p>
               ) : (
                 /* --------------------- DROPDOWN IF USER HAS LOGGED IN --------------------- */
                 /* --------------------- DROPDOWN IF USER NOT LOGGED IN --------------------- */
