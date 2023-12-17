@@ -8,6 +8,7 @@ export const Dashboard = () => {
           <title>Dashboard</title>
         </Helmet>
       </HelmetProvider>
+      <div className="w-full h-[120vh]"></div>
     </>
   );
 };

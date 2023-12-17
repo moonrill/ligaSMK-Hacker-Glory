@@ -7,8 +7,11 @@ export default {
       center: true,
     },
     screens: {
-      'xs': "500px",
-      ...defaultTheme.screens
+      xs: "500px",
+      ...defaultTheme.screens,
+    },
+    fontFamily: {
+      inter: ["Inter", "sans-serif"],
     },
     extend: {},
   },

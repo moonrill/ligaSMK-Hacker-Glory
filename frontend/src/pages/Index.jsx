@@ -40,7 +40,7 @@ export const Index = () => {
             <h1 className="font-semibold text-lg lg:text-2xl">
               Pengumuman Penting
             </h1>
-            <Link className="text-xs md:text-sm lg:text-base flex items-center gap-1 font-semibold text-blue-700 transition-all hover:border-b hover:border-blue-700 self-end">
+            <Link className="text-xs md:text-sm lg:text-base flex items-center gap-1 font-semibold text-blue-700 transition-all hover:border-b hover:border-blue-700 md:self-end">
               Lainnya <HiArrowLongRight className="mt-0.5" />
             </Link>
           </div>

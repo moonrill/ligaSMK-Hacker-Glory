@@ -7,6 +7,7 @@ import { HiOutlineLogout } from "react-icons/hi";
 import { useLogoutMutation } from "../services/authApi";
 import { useSelector } from "react-redux";
 
+// eslint-disable-next-line react/prop-types
 export const Navbar = ({ getUserData }) => {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);

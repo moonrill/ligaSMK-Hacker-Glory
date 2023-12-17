@@ -13,7 +13,7 @@ class CategoryController extends Controller
 {
     public function __construct() 
     {
-        $this->middleware('role:admin,member');
+        $this->middleware('role:admin')->only(['create', 'update', 'delete']);
     }
 
     /**
@@ -22,12 +22,26 @@ class CategoryController extends Controller
      * @param Request $request The request object.
      * @return JsonResponse The JSON response containing the categories.
      */
-    public function getAll(Request $request) 
+    public function getAll(Request $request)
     {
-        $categories = Category::query()
-                                ->orderBy('name')
-                                ->get();
+        // Get categories
+        $query = Category::query();
+        $orderBy = $request->input('orderBy', 'name');
+        $orderDirection = $request->input('orderDirection', 'asc');
+        $withMading = $request->input('withMading', 'false');
 
+        if ($withMading === 'true') {
+            $query->with('madings')->withCount('madings');
+        }
+
+        if ($orderBy === 'name') {
+            $query->orderBy('name', $orderDirection);
+        } else if ($orderBy === 'count') {
+            $query->orderBy('madings_count', $orderDirection);
+        }
+    
+        $categories = $query->get();
+    
         return response()->json($categories, 200);
     }
 

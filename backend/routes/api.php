@@ -27,7 +27,7 @@ Route::middleware('auth:api')->group(function() {
 
     /* ------------------------------ CATEGORY API ------------------------------ */
     Route::prefix('category')->controller(CategoryController::class)->group(function () {
-        Route::get('/', 'getAll');
+        Route::get('/', 'getAll')->withoutMiddleware('auth:api');
         Route::post('/', 'create');
         Route::get('/{name}', 'getOne');
         Route::patch('/{name}', 'update');

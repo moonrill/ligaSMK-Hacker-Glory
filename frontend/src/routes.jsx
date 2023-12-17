@@ -3,8 +3,9 @@ import { Index } from "./pages/Index";
 import { Login } from "./pages/Login";
 import { Layout } from "./layout/Layout";
 import { DashboardLayout } from "./layout/DashboardLayout";
-import { Dashboard } from "./pages/Dashboard";
+import { Dashboard } from "./pages/Dashboard/Dashboard";
 import { PageNotFound } from "./pages/404";
+import { Category } from "./pages/Dashboard/Category";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
         index: true,
         element: <Dashboard />,
       },
+      {
+        path: '/dashboard/category',
+        element: <Category/>
+      }
     ],
   },
   {
