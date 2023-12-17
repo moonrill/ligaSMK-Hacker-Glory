@@ -30,7 +30,7 @@ Route::middleware('auth:api')->group(function() {
         Route::get('/', 'getAll')->withoutMiddleware('auth:api');
         Route::post('/', 'create');
         Route::get('/{name}', 'getOne');
-        Route::patch('/{name}', 'update');
+        Route::post('/{name}', 'update');
         Route::delete('/{name}', 'delete');
     });
     /* ------------------------------ CATEGORY API ------------------------------ */

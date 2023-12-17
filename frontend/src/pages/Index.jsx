@@ -5,9 +5,11 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { CategoryCard } from "../components/CategoryCard";
+import { useGetAllCategoryQuery } from "../services/categoryApi";
 
 export const Index = () => {
   const { user } = useSelector((state) => state.auth);
+  const { data: categories, isLoading } = useGetAllCategoryQuery();
   return (
     <>
       <HelmetProvider>
@@ -66,14 +68,9 @@ export const Index = () => {
             Category
           </h1>
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 mt-5 lg:mt-10">
-            <CategoryCard name={"Penting"} />
-            <CategoryCard name={"Pendidikan"} />
-            <CategoryCard name={"Kesehatan"} />
-            <CategoryCard />
-            <CategoryCard />
-            <CategoryCard />
-            <CategoryCard />
-            <CategoryCard />
+            {categories?.map((category) => (
+              <CategoryCard key={category.id} name={category.name} icon={category.icon} />
+            ))}
           </div>
         </div>
       </div>

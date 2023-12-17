@@ -1,8 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { LuImagePlus } from "react-icons/lu";
-import { useCreateCategoryMutation } from "../../services/categoryApi";
+import {
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+} from "../../services/categoryApi";
 import { useSelector } from "react-redux";
+import { FaTrash } from "react-icons/fa";
 
 export const CreateCategoryModal = ({ isOpen, onClose }) => {
   const [name, setName] = useState(null);
@@ -15,12 +19,12 @@ export const CreateCategoryModal = ({ isOpen, onClose }) => {
     setName(null);
     setIcon(null);
     setErrors({});
-  }
+  };
 
   const handleClose = () => {
     resetModal();
     onClose();
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,7 +32,7 @@ export const CreateCategoryModal = ({ isOpen, onClose }) => {
     const formData = new FormData();
     name && formData.append("name", name);
     icon && formData.append("icon", icon);
-    
+
     create({ token, data: formData })
       .unwrap()
       .then(() => {
@@ -68,7 +72,7 @@ export const CreateCategoryModal = ({ isOpen, onClose }) => {
                 name="name"
                 placeholder="Category name"
                 onChange={(e) => {
-                  setErrors({...errors, [e.target.name]: null})
+                  setErrors({ ...errors, [e.target.name]: null });
                   return setName(e.target.value);
                 }}
               />
@@ -86,15 +90,15 @@ export const CreateCategoryModal = ({ isOpen, onClose }) => {
               <p className="text-sm font-semibold">Icon</p>
               <label
                 htmlFor="icon"
-                className={`text-sm cursor-pointer font-semibold border-2 rounded-md border-dashed flex flex-col justify-center items-center min-h-[120px] w-[120px] hover:border-blue-700 focus:border-blue-700 ${errors?.icon ? "border-red-600" : "border-slate-400"} ${
-                  icon && "p-3"
-                }`}
+                className={`text-sm cursor-pointer font-semibold border-2 rounded-md border-dashed flex flex-col justify-center items-center min-h-[120px] w-[120px] hover:border-blue-700 focus:border-blue-700 ${
+                  errors?.icon ? "border-red-600" : "border-slate-400"
+                } ${icon && "p-3"}`}
               >
                 {icon && (
                   <img
                     src={URL.createObjectURL(icon)}
                     alt="icon"
-                    className="w-[70px] h-[70px] object-contain"
+                    className="object-contain"
                   />
                 )}
                 {icon && (
@@ -114,14 +118,14 @@ export const CreateCategoryModal = ({ isOpen, onClose }) => {
                 name="icon"
                 className="hidden"
                 onChange={(e) => {
-                  setErrors({...errors, [e.target.name]: null})
+                  setErrors({ ...errors, [e.target.name]: null });
                   return setIcon(e.target.files[0]);
                 }}
               />
               {errors.icon && (
                 <div className="mt-1">
                   {errors.icon?.map((err, index) => (
-                    <p className="text-sm text-red-600" key={index}>
+                    <p className="text-xs text-red-600" key={index}>
                       {err}
                     </p>
                   ))}
@@ -154,28 +158,31 @@ export const UpdateCategoryModal = ({ isOpen, onClose, category }) => {
   const [name, setName] = useState(category?.name);
   const [icon, setIcon] = useState(null);
   const token = useSelector((state) => state.auth.token);
-  const [create] = useCreateCategoryMutation();
+  const [update] = useUpdateCategoryMutation();
   const [errors, setErrors] = useState({});
+  const [iconShow, setIconShow] = useState(true);
 
   const resetModal = () => {
-    setName(null);
+    setName(category?.name);
     setIcon(null);
+    setIconShow(true);
     setErrors({});
-  }
+  };
 
   const handleClose = () => {
     resetModal();
     onClose();
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const formData = new FormData();
+    name && formData.append("old_name", category?.name);
     name && formData.append("name", name);
     icon && formData.append("icon", icon);
-    
-    create({ token, data: formData })
+
+    update({ token, data: formData })
       .unwrap()
       .then(() => {
         handleClose();
@@ -212,16 +219,17 @@ export const UpdateCategoryModal = ({ isOpen, onClose, category }) => {
                 spellCheck="false"
                 autoFocus
                 name="name"
+                value={name}
                 placeholder="Category name"
                 onChange={(e) => {
-                  setErrors({...errors, [e.target.name]: null})
+                  setErrors({ ...errors, [e.target.name]: null });
                   return setName(e.target.value);
                 }}
               />
               {errors.name && (
                 <div className="mt-1">
                   {errors.name?.map((err, index) => (
-                    <p className="text-sm text-red-600" key={index}>
+                    <p className="text-xs text-red-600" key={index}>
                       {err}
                     </p>
                   ))}
@@ -230,44 +238,75 @@ export const UpdateCategoryModal = ({ isOpen, onClose, category }) => {
             </div>
             <div>
               <p className="text-sm font-semibold">Icon</p>
-              <label
-                htmlFor="icon"
-                className={`text-sm cursor-pointer font-semibold border-2 rounded-md border-dashed flex flex-col justify-center items-center h-[120px] w-[120px] hover:border-blue-700 focus:border-blue-700 ${errors?.icon ? "border-red-600" : "border-slate-400"} ${
-                  icon && "p-3"
-                }`}
+              <div
+                className={`max-w-[120px] min-h-[120px] group cursor-pointer relative ${
+                  iconShow ? "flex" : "hidden"
+                } justify-center flex-col items-center`}
+                onClick={() => setIconShow(false)}
               >
-                {icon && (
-                  <img
-                    src={URL.createObjectURL(icon)}
-                    alt="icon"
-                    className="w-[70px] h-[70px] object-contain"
-                  />
-                )}
-                {icon && (
-                  <span className="mt-2 text-xs font-normal text-center">
-                    {icon.name}
-                  </span>
-                )}
-                <LuImagePlus
-                  size={40}
-                  className={`text-blue-600 ${icon && "hidden"}`}
+                <img
+                  src={`http://localhost:8000/storage/${category?.icon}`}
+                  alt="category-icon"
+                  className="group-hover:brightness-75 rounded-md object-cover"
                 />
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                id="icon"
-                name="icon"
-                className="hidden"
-                onChange={(e) => {
-                  setErrors({...errors, [e.target.name]: null})
-                  return setIcon(e.target.files[0]);
-                }}
-              />
+                <FaTrash
+                  className="absolute text-red-600 hidden group-hover:block"
+                  size={"2rem"}
+                />
+              </div>
+              {iconShow && (
+                <button
+                  type="button"
+                  className="mt-3 bg-red-300 text-red-800 md:hidden font-semibold min-w-[120px] p-2 rounded-md flex items-center gap-2 justify-center"
+                  onClick={() => setIconShow(null)}
+                >
+                  <FaTrash />
+                  <div className="mt-0.5">Delete icon</div>
+                </button>
+              )}
+              {!iconShow && (
+                <>
+                  <label
+                    htmlFor="icon"
+                    className={`text-sm cursor-pointer font-semibold border-2 rounded-md border-dashed flex flex-col justify-center items-center min-h-[120px] w-[120px] hover:border-blue-700 focus:border-blue-700 ${
+                      errors?.icon ? "border-red-600" : "border-slate-400"
+                    } ${icon && "p-3"}`}
+                  >
+                    {icon && (
+                      <img
+                        src={URL.createObjectURL(icon)}
+                        alt="icon"
+                        className="object-contain"
+                      />
+                    )}
+                    {icon && (
+                      <span className="mt-2 text-xs font-normal text-center">
+                        {icon.name}
+                      </span>
+                    )}
+                    <LuImagePlus
+                      size={40}
+                      className={`text-blue-600 ${icon && "hidden"}`}
+                    />
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="icon"
+                    name="icon"
+                    className="hidden"
+                    onChange={(e) => {
+                      setErrors({ ...errors, [e.target.name]: null });
+                      return setIcon(e.target.files[0]);
+                    }}
+                  />
+                </>
+              )}
+
               {errors.icon && (
                 <div className="mt-1">
                   {errors.icon?.map((err, index) => (
-                    <p className="text-sm text-red-600" key={index}>
+                    <p className="text-xs text-red-600" key={index}>
                       {err}
                     </p>
                   ))}

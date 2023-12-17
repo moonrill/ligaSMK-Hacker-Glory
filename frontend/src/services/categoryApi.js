@@ -43,8 +43,8 @@ export const categoryApi = createApi({
     }),
     updateCategory: builder.mutation({
       query: ({ token, data }) => ({
-        url: `/category/${data.name}`,
-        method: "PATCH",
+        url: `/category/${data?.get('old_name')}`,
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
