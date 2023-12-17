@@ -21,21 +21,56 @@ export const categoryApi = createApi({
       providesTags: [{ type: "Category", id: "LIST" }],
     }),
     createCategory: builder.mutation({
-      query: ({token, data}) => {
-        return {
-          url: "/category",
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: data,
-        };
-      },
+      query: ({ token, data }) => ({
+        url: "/category",
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: data,
+      }),
+      invalidatesTags: (_result, error) =>
+        error ? [] : [{ type: "Category", id: "LIST" }],
+    }),
+    getOneCategory: builder.query({
+      query: (token, name) => ({
+        url: `/category/${name}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
+    updateCategory: builder.mutation({
+      query: ({ token, data }) => ({
+        url: `/category/${data.name}`,
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: data,
+      }),
+      invalidatesTags: (_result, error) =>
+        error ? [] : [{ type: "Category", id: "LIST" }],
+    }),
+    deleteCategory: builder.mutation({
+      query: ({ token, name }) => ({
+        url: `category/${name}`,
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
       invalidatesTags: (_result, error) =>
         error ? [] : [{ type: "Category", id: "LIST" }],
     }),
   }),
 });
 
-export const { useGetAllCategoryQuery, useCreateCategoryMutation } =
-  categoryApi;
+export const {
+  useGetAllCategoryQuery,
+  useCreateCategoryMutation,
+  useGetOneCategoryQuery,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+} = categoryApi;
