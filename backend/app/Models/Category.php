@@ -33,6 +33,6 @@ class Category extends Model
 
     public function madings(): BelongsToMany
     {
-        return $this->belongsToMany(Mading::class, 'mading_categories');
+        return $this->belongsToMany(Mading::class, 'madings_categories');
     }
 }

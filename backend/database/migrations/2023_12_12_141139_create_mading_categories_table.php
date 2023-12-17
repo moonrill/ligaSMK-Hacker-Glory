@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('mading_categories', function (Blueprint $table) {
+        Schema::create('madings_categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mading_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('category_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->timestamps();
         });
 
         Schema::enableForeignKeyConstraints();

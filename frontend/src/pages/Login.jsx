@@ -69,10 +69,10 @@ export const Login = () => {
         </Helmet>
       </HelmetProvider>
       <div className="container sm:flex sm:items-center md:max-w-full md:p-10 lg:p-0 mx-auto h-screen">
-        <div className="h-full w-full flex align-bottom flex-col sm:flex-row sm:rounded-md sm:shadow-md sm:h-3/4 bg-blue-700 md:h-full md:bg-slate-50 md:rounded-xl sm:overflow-hidden md:shadow-xl lg:h-full xl:h-full lg:rounded-none">
+        <div className="h-full w-full flex align-bottom flex-col sm:flex-row sm:rounded-md sm:shadow-md sm:h-3/4 bg-blue-700 md:h-3/4 md:bg-slate-50 md:rounded-xl sm:overflow-hidden md:shadow-xl lg:h-full xl:h-full lg:rounded-none">
           <div className="h-1/2 p-5 flex w-full justify-center bg-blue-700 sm:h-full sm:w-full sm:justify-normal">
-            <div className="flex justify-center items-center max-w-sm sm:justify-start sm:items-start sm:p-6">
-              <img src={blogLogo} alt="blog img" className="h-fit" />
+            <div className="flex justify-center items-center">
+              <img src={blogLogo} alt="blog img" className="h-fit lg:w-3/4"/>
             </div>
           </div>
           <div className="py-7 px-5 w-full h-4/6 bg-slate-50 rounded-t-3xl mt-auto sm:p-6 sm:w-5/6 sm:h-full sm:justify-center sm:rounded-none sm:flex md:w-4/6 md:h-full md:m-0 md:p-6 sm:flex-col md:justify-center lg:px-8">

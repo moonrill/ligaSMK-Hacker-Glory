@@ -16,7 +16,8 @@ return new class extends Migration
             $table->uuid('author_id');
             $table->uuid('accepted_by');
             $table->string('title');
-            $table->text('body');
+            $table->text('description');
+            $table->string('thumbnail');
             $table->enum('status', ["pending","accepted","rejected"])->default('pending');
             $table->dateTime('post_schedule');
             $table->timestamps();

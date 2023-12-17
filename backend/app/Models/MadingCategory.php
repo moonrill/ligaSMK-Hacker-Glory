@@ -20,6 +20,8 @@ class MadingCategory extends Model
         'category_id',
     ];
 
+    public $timestamps = false;
+
     /**
      * The attributes that should be cast to native types.
      *
